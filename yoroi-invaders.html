@@ -64,7 +64,7 @@ button:disabled{opacity:.42;cursor:not-allowed}
   <div>SOUL <span id="soul">0</span></div>
 </div>
 <div class="sub-hud">
-  <div id="modBox"><span class="mod-tag" id="modTag">NORMALSORTIE</span></div>
+  <div id="modBox"><span class="mod-tag" id="modTag">MOD: 通常作戦</span></div>
   <div class="relic-badges" id="relicBox"></div>
 </div>
 <div class="wrap"><canvas id="game" width="480" height="640"></canvas>
@@ -125,8 +125,7 @@ button:disabled{opacity:.42;cursor:not-allowed}
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d'),W=480,H=640;
 const sprite=new Image();sprite.src='yoroi-player.png';let spriteOK=false;sprite.onload=()=>spriteOK=true;
 
-// 外部MP3/WAVを使う場合はここを書き換え（例: 'bgm.mp3'）。空文字なら内蔵の疾走シンセBGMが鳴ります。
-const BGM_SRC='';
+const BGM_SRC='bgm.mp3';
 let customAudio=null;
 if(BGM_SRC){
   customAudio=new Audio(BGM_SRC);
@@ -134,7 +133,6 @@ if(BGM_SRC){
   customAudio.volume=0.35;
 }
 
-// --- Web Audio API サウンド＆疾走アルペジオBGM ---
 const AudioCtx=window.AudioContext||window.webkitAudioContext;
 let actx=null,bgmEnabled=true,bgmTimer=null,bgmStep=0;
 
@@ -157,15 +155,14 @@ function tone(freq,endFreq,dur,type='square',vol=0.07,delay=0){
   osc.start(t);osc.stop(t+dur);
 }
 
-// 疾走感のあるエレクトロ・アルペジオパターン（半音階・短調ベースの推進力重視）
 const arpNotes=[220,311.13,349.23,440,349.23,311.13,261.63,392.00];
 const bassNotes=[110,110,87.31,87.31,98.00,98.00,130.81,123.47];
 
 function tickBgm(){
-  if(!bgmEnabled||!actx||(state!=='play'&&state!=='dying'&&state!=='upgrade')){return;}
   if(customAudio)return;
+  if(!bgmEnabled||!actx||(state!=='play'&&state!=='dying'&&state!=='upgrade'))return;
   const isBoss=!!boss;
-  const transpose=isBoss?1.12246:1; // ボス戦は半音2つ分（全音）高くして緊迫感アップ
+  const transpose=isBoss?1.12246:1;
   const idx=bgmStep%arpNotes.length;
   const leadFreq=arpNotes[idx]*transpose*(bgmStep%16>=8?1.1892:1);
   tone(leadFreq,leadFreq*1.01,0.095,'sawtooth',isBoss?0.026:0.02);
@@ -181,12 +178,15 @@ function tickBgm(){
 
 function startBgmLoop(){
   if(customAudio){
-    if(bgmEnabled&&(state==='play'||state==='upgrade'))customAudio.play().catch(()=>{});
-    else customAudio.pause();
+    if(bgmEnabled&&(state==='play'||state==='upgrade'||state==='dying')){
+      customAudio.play().catch(()=>{});
+    }else{
+      customAudio.pause();
+    }
     return;
   }
   if(!bgmTimer){
-    bgmTimer=setInterval(tickBgm,135); // 約111BPM 16分音符相当の疾走感
+    bgmTimer=setInterval(tickBgm,135);
   }
 }
 
@@ -198,8 +198,11 @@ function syncBgmButtons(){
     if(el.classList.contains('mode-btn'))el.classList.toggle('active-on',bgmEnabled);
   });
   if(customAudio){
-    if(bgmEnabled&&(state==='play'||state==='upgrade'))customAudio.play().catch(()=>{});
-    else customAudio.pause();
+    if(bgmEnabled&&(state==='play'||state==='upgrade'||state==='dying')){
+      customAudio.play().catch(()=>{});
+    }else{
+      customAudio.pause();
+    }
   }
 }
 
@@ -233,7 +236,6 @@ const sfx={
   }
 };
 
-// --- 永続強化（localStorage） ---
 const STORAGE_KEY='yoroi_invaders_meta_v1';
 let meta={soul:0,startPwr:0,startHp:0,startShield:0};
 try{
@@ -268,7 +270,6 @@ function renderPerma(){
   });
 }
 
-// --- ローグライト強化＆レリック定義 ---
 const statUpgrades=[
   {id:'rate',name:'連射速度アップ',rarity:'COMMON',desc:'ショットの間隔が短くなる。',apply:()=>up.rate=Math.min(5,up.rate+1)},
   {id:'double',name:'マルチショット',rarity:'COMMON',desc:'弾を2〜3方向に同時発射。',apply:()=>up.double=Math.min(2,up.double+1)},
@@ -384,7 +385,7 @@ function reset(){
   wave();hud();
 }
 
-function start(){initAudio();reset();state='play';overlay('')}
+function start(){initAudio();reset();state='play';overlay('');syncBgmButtons()}
 
 function addScore(pts){
   score+=Math.round(pts*curMod.scoreMul);
@@ -408,6 +409,7 @@ function triggerGameOver(){
 
 function finishGameOver(){
   state='over';
+  syncBgmButtons();
   const earned=$('result').dataset.earned||0;
   $('result').innerHTML=`SCORE <strong>${score}</strong>　/　STAGE <strong>${stage}</strong><br><span style="color:var(--gold)">獲得SOUL: +${earned}</span>`;
   overlay('over');
@@ -596,7 +598,6 @@ function update(dt){
     badShots.push({x:e.x,y:e.y+12,w:5,h:12,vx:0,vy:(2.5+stage*.16)*curMod.shotSpdMul});
   }
 
-  // 自機弾移動＆ホーミング誘導
   shots.forEach(b=>{
     if(up.homing>0){
       let target=null,bestD=260;
@@ -628,7 +629,6 @@ function update(dt){
   shots=shots.filter(b=>b.y>-25&&b.y<H+25&&b.x>-25&&b.x<W+25);
   badShots=badShots.filter(b=>b.y<H+20&&b.x>-20&&b.x<W+20);
 
-  // 回復アイテム
   for(let i=items.length-1;i>=0;i--){
     let it=items[i];
     it.y+=it.vy*s;
@@ -652,7 +652,6 @@ function update(dt){
     if(it.y>H+25)items.splice(i,1);
   }
 
-  // 自機弾とボス
   if(boss){
     for(let j=shots.length-1;j>=0;j--){
       const b=shots[j];
@@ -682,7 +681,6 @@ function update(dt){
     }
   }
 
-  // 自機弾と通常敵
   for(let i=enemies.length-1;i>=0;i--){
     let e=enemies[i];
     if(e.y>H-105){hurt();e.y-=35;e.baseY-=35}
@@ -908,7 +906,7 @@ $('openPermaOver').onclick=()=>openPerma('over');
 $('closePerma').onclick=()=>overlay(prevOverlay);
 $('startBtn').onclick=start;
 $('restart').onclick=start;
-$('toTitle').onclick=()=>{reset();overlay('start')};
+$('toTitle').onclick=()=>{reset();state='title';syncBgmButtons();overlay('start')};
 
 reset();syncBgmButtons();overlay('start');requestAnimationFrame(loop);
 })();
