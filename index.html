@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color" content="#09080e">
+
+<meta name="description" content="伊武月ヨロイ OFFICIAL WEBSITE">
+
+<title>伊武月ヨロイ | OFFICIAL WEBSITE</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+
+:root {
+
+  --bg: #09080e;
+
+  --panel: #15111d;
+
+  --purple: #9b72c5;
+
+  --light: #c9a9ec;
+
+  --white: #f5f1fa;
+
+  --gray: #a39aaa;
+
+  --line: rgba(196,160,235,.2);
+
+}
+
+* {
+
+  margin: 0;
+
+  padding: 0;
+
+  box-sizing: border-box;
+
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+
+  background: var(--bg);
+
+  color: var(--white);
+
+  font-family: 'Noto Sans JP', sans-serif;
+
+  overflow-x: hidden;
+
+}
+
+/* =========================
+
+   DIGITAL NOISE INTRO
+
+========================= */
+
+#intro {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 200;
+
+  background: #05040a;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  overflow: hidden;
+
+  transition: opacity 1s, visibility 1s;
+
+}
+
+#intro.hide {
+
+  opacity: 0;
+
+  visibility: hidden;
+
+}
+
+/* ノイズキャンバス */
+
+#noiseCanvas {
+
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  opacity: .19;
+
+  pointer-events: none;
+
+}
+
+/* 走査線 */
+
+.scanlines {
+
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  background: repeating-linear-gradient(
+
+    to bottom,
+
+    transparent 0px,
+
+    transparent 3px,
+
+    rgba(255,255,255,.07) 4px
+
+  );
+
+  opacity: .3;
+
+  animation: scanMove .15s infinite;
+
+}
+
+@keyframes scanMove {
+
+  from { transform: translateY(0); }
+
+  to { transform: translateY(4px); }
+
+}
+
+/* 画面の色ずれ */
+
+.color-shift {
+
+  position: absolute;
+
+  inset: 0;
+
+  background:
+
+    linear-gradient(90deg,
+
+    transparent 49.5%,
+
+    rgba(160,90,255,.08) 50%,
+
+    transparent 50.5%);
+
+  animation: shift 3s infinite;
+
+}
+
+@keyframes shift {
+
+  0%,90%,100% { opacity: 0; }
+
+  92% { opacity: .8; }
+
+  94% { opacity: .1; }
+
+  96% { opacity: .7; }
+
+}
+
+/* ランダムなノイズブロック */
+
+.glitch-block {
+
+  position: absolute;
+
+  width: 100%;
+
+  height: 2px;
+
+  left: 0;
+
+  background: var(--light);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  animation: blockGlitch 3s infinite;
+
+}
+
+.glitch-block:nth-of-type(1) {
+
+  top: 25%;
+
+  animation-delay: .2s;
+
+}
+
+.glitch-block:nth-of-type(2) {
+
+  top: 65%;
+
+  animation-delay: 1.1s;
+
+}
+
+.glitch-block:nth-of-type(3) {
+
+  top: 80%;
+
+  animation-delay: 2s;
+
+}
+
+@keyframes blockGlitch {
+
+  0%,90%,100% {
+
+    opacity: 0;
+
+    transform: translateX(0);
+
+  }
+
+  92% {
+
+    opacity: .8;
+
+    transform: translateX(15px);
+
+    height: 4px;
+
+  }
+
+  94% {
+
+    opacity: .3;
+
+    transform: translateX(-20px);
+
+  }
+
+  96% {
+
+    opacity: .7;
+
+    transform: translateX(10px);
+
+    height: 1px;
+
+  }
+
+}
+
+/* 起動ロゴ */
+
+.intro-content {
+
+  position: relative;
+
+  z-index: 5;
+
+  text-align: center;
+
+}
+
+.intro-title {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: clamp(38px, 10vw, 75px);
+
+  font-weight: 800;
+
+  letter-spacing: 10px;
+
+  color: var(--light);
+
+  position: relative;
+
+  animation: logoGlitch 2.5s infinite;
+
+}
+
+.intro-title::before,
+
+.intro-title::after {
+
+  content: "YOROI";
+
+  position: absolute;
+
+  left: 0;
+
+  width: 100%;
+
+  overflow: hidden;
+
+  opacity: .7;
+
+}
+
+.intro-title::before {
+
+  color: #b45cff;
+
+  animation: glitchTop 2s infinite;
+
+}
+
+.intro-title::after {
+
+  color: #59dcff;
+
+  animation: glitchBottom 2.5s infinite;
+
+}
+
+@keyframes logoGlitch {
+
+  0%,90%,100% { transform: translate(0); }
+
+  91% { transform: translate(-3px,2px); }
+
+  93% { transform: translate(3px,-2px); }
+
+  95% { transform: translate(-1px,1px); }
+
+}
+
+@keyframes glitchTop {
+
+  0%,88%,100% { clip-path: inset(0 0 100% 0); }
+
+  90% { clip-path: inset(10% 0 75% 0); transform: translate(-5px); }
+
+  94% { clip-path: inset(50% 0 35% 0); transform: translate(5px); }
+
+}
+
+@keyframes glitchBottom {
+
+  0%,87%,100% { clip-path: inset(100% 0 0 0); }
+
+  90% { clip-path: inset(65% 0 10% 0); transform: translate(5px); }
+
+  94% { clip-path: inset(20% 0 65% 0); transform: translate(-4px); }
+
+}
+
+.intro-sub {
+
+  font-family: Orbitron, sans-serif;
+
+  color: #a89ab8;
+
+  font-size: 10px;
+
+  letter-spacing: 5px;
+
+  margin-top: 25px;
+
+}
+
+.loading {
+
+  width: 200px;
+
+  height: 2px;
+
+  background: #29202f;
+
+  margin: 35px auto 0;
+
+  overflow: hidden;
+
+  box-shadow: 0 0 15px #a36cda55;
+
+}
+
+.loading::after {
+
+  content: "";
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  background: var(--light);
+
+  animation: loading 2s ease-in-out;
+
+}
+
+@keyframes loading {
+
+  from { transform: translateX(-100%); }
+
+  to { transform: translateX(0); }
+
+}
+
+.intro-status {
+
+  color: #776b83;
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 9px;
+
+  letter-spacing: 3px;
+
+  margin-top: 15px;
+
+  animation: blink 1s infinite;
+
+}
+
+@keyframes blink {
+
+  50% { opacity: .3; }
+
+}
+
+/* =========================
+
+   GLOBAL NOISE
+
+========================= */
+
+body::before {
+
+  content: "";
+
+  position: fixed;
+
+  inset: 0;
+
+  pointer-events: none;
+
+  z-index: 90;
+
+  opacity: .07;
+
+  background-image: repeating-radial-gradient(
+
+    circle at 30% 40%,
+
+    transparent 0,
+
+    rgba(255,255,255,.3) 1px,
+
+    transparent 2px
+
+  );
+
+  background-size: 5px 5px;
+
+}
+
+/* HEADER */
+
+header {
+
+  position: absolute;
+
+  top: 0;
+
+  width: 100%;
+
+  height: 85px;
+
+  padding: 0 7%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  z-index: 50;
+
+  border-bottom: 1px solid var(--line);
+
+  background: rgba(9,8,14,.88);
+
+  backdrop-filter: blur(12px);
+
+}
+
+.logo {
+
+  font-family: Orbitron, sans-serif;
+
+  font-weight: 800;
+
+  letter-spacing: 3px;
+
+  font-size: 18px;
+
+}
+
+.logo span { color: var(--light); }
+
+nav {
+
+  display: flex;
+
+  gap: 23px;
+
+}
+
+nav a {
+
+  text-decoration: none;
+
+  color: var(--gray);
+
+  font-size: 11px;
+
+  letter-spacing: 1px;
+
+  transition: .3s;
+
+}
+
+nav a:hover { color: var(--light); }
+
+/* HERO */
+
+.hero {
+
+  min-height: 760px;
+
+  padding: 150px 8% 80px;
+
+  display: grid;
+
+  grid-template-columns: 1fr .9fr;
+
+  align-items: center;
+
+  gap: 35px;
+
+  position: relative;
+
+  overflow: hidden;
+
+}
+
+.hero::before {
+
+  content: "";
+
+  position: absolute;
+
+  width: 600px;
+
+  height: 600px;
+
+  right: 0;
+
+  top: 100px;
+
+  background: #70469a;
+
+  filter: blur(180px);
+
+  opacity: .17;
+
+  border-radius: 50%;
+
+}
+
+.hero-content {
+
+  position: relative;
+
+  z-index: 2;
+
+  animation: appear 1.2s ease both;
+
+}
+
+.hero-tag {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 11px;
+
+  letter-spacing: 4px;
+
+  color: var(--light);
+
+  margin-bottom: 30px;
+
+}
+
+.hero h1 {
+
+  font-size: clamp(50px, 8vw, 95px);
+
+  line-height: 1.25;
+
+  font-weight: 900;
+
+  letter-spacing: -4px;
+
+}
+
+.hero h1 span {
+
+  color: transparent;
+
+  -webkit-text-stroke: 1px var(--light);
+
+}
+
+.hero-description {
+
+  color: #b3aaba;
+
+  font-size: 13px;
+
+  line-height: 2.2;
+
+  margin-top: 25px;
+
+}
+
+.hero-en {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 10px;
+
+  color: #776b83;
+
+  letter-spacing: 3px;
+
+  margin-top: 35px;
+
+}
+
+.hero-buttons {
+
+  display: flex;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+  margin-top: 35px;
+
+}
+
+.btn {
+
+  display: inline-block;
+
+  padding: 13px 22px;
+
+  border: 1px solid var(--purple);
+
+  color: var(--white);
+
+  font-size: 11px;
+
+  text-decoration: none;
+
+  transition: .3s;
+
+}
+
+.btn.primary {
+
+  background: var(--purple);
+
+}
+
+.btn:hover {
+
+  background: var(--light);
+
+  color: #160d20;
+
+  box-shadow: 0 0 25px #9b72c566;
+
+}
+
+.hero-visual {
+
+  position: relative;
+
+  z-index: 2;
+
+  animation: float 5s ease-in-out infinite;
+
+}
+
+.hero-image-frame {
+
+  width: 100%;
+
+  max-width: 470px;
+
+  margin: auto;
+
+  background: #f3f1f4;
+
+  border: 1px solid var(--purple);
+
+  box-shadow: 0 0 50px #9b72c522;
+
+  overflow: hidden;
+
+}
+
+.hero-image-frame img {
+
+  width: 100%;
+
+  display: block;
+
+  object-fit: contain;
+
+}
+
+.image-caption {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 10px;
+
+  letter-spacing: 4px;
+
+  color: var(--light);
+
+  text-align: right;
+
+  margin-top: 15px;
+
+}
+
+@keyframes float {
+
+  0%,100% { transform: translateY(0); }
+
+  50% { transform: translateY(-12px); }
+
+}
+
+@keyframes appear {
+
+  from { opacity: 0; transform: translateY(30px); }
+
+  to { opacity: 1; transform: translateY(0); }
+
+}
+
+/* SECTIONS */
+
+section {
+
+  padding: 110px 9%;
+
+  border-top: 1px solid var(--line);
+
+}
+
+.section-number {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 11px;
+
+  color: var(--light);
+
+  letter-spacing: 4px;
+
+  margin-bottom: 12px;
+
+}
+
+.section-title {
+
+  font-size: 32px;
+
+  font-weight: 800;
+
+  margin-bottom: 45px;
+
+}
+
+.section-title span {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 11px;
+
+  color: #80748b;
+
+  margin-left: 12px;
+
+  font-weight: 400;
+
+}
+
+/* PROFILE */
+
+.profile-layout {
+
+  display: grid;
+
+  grid-template-columns: .8fr 1.2fr;
+
+  gap: 35px;
+
+  align-items: center;
+
+}
+
+.profile-photo {
+
+  background: #f2f0f3;
+
+  border: 1px solid var(--line);
+
+  overflow: hidden;
+
+}
+
+.profile-photo img {
+
+  display: block;
+
+  width: 100%;
+
+}
+
+.profile-info {
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  padding: 35px;
+
+}
+
+.profile-info h3 {
+
+  font-size: 25px;
+
+  margin-bottom: 18px;
+
+}
+
+.profile-info p {
+
+  font-size: 13px;
+
+  color: var(--gray);
+
+  line-height: 2.3;
+
+}
+
+.profile-face {
+
+  margin-top: 25px;
+
+  max-width: 180px;
+
+  border: 1px solid var(--line);
+
+  overflow: hidden;
+
+  background: white;
+
+}
+
+.profile-face img {
+
+  width: 100%;
+
+  display: block;
+
+}
+
+/* CHANNELS */
+
+.activity-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+
+}
+
+.activity-card {
+
+  background: linear-gradient(135deg,#1b1524,#100d16);
+
+  border: 1px solid var(--line);
+
+  padding: 35px;
+
+  min-height: 175px;
+
+  text-decoration: none;
+
+  color: var(--white);
+
+  position: relative;
+
+  transition: .3s;
+
+  display: block;
+
+}
+
+.activity-card:hover {
+
+  transform: translateY(-6px);
+
+  border-color: var(--light);
+
+  box-shadow: 0 10px 35px #9b72c522;
+
+}
+
+.activity-card small {
+
+  color: var(--light);
+
+  font-family: Orbitron, sans-serif;
+
+  letter-spacing: 3px;
+
+  font-size: 10px;
+
+}
+
+.activity-card h3 {
+
+  font-size: 21px;
+
+  margin-top: 20px;
+
+}
+
+.activity-card p {
+
+  font-size: 12px;
+
+  color: var(--gray);
+
+  margin-top: 10px;
+
+}
+
+.activity-card .arrow {
+
+  position: absolute;
+
+  right: 25px;
+
+  bottom: 25px;
+
+  font-size: 22px;
+
+  color: var(--light);
+
+}
+
+/* GROUP CHANNEL */
+
+.activity-card.group {
+
+  border-color: rgba(201,169,236,.35);
+
+  background: linear-gradient(135deg,#251a32,#100d16);
+
+}
+
+.activity-card.group small {
+
+  color: #d7b5ff;
+
+}
+
+/* ARTIST */
+
+.artist-box {
+
+  position: relative;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  padding: 75px 25px;
+
+  background: linear-gradient(135deg,#21172e,#0d0a13);
+
+  border: 1px solid var(--line);
+
+}
+
+.artist-box::before {
+
+  content: "ARTIST";
+
+  position: absolute;
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: clamp(70px,15vw,160px);
+
+  color: rgba(255,255,255,.025);
+
+  top: 20px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+}
+
+.artist-box h3 {
+
+  position: relative;
+
+  font-family: Orbitron, sans-serif;
+
+  letter-spacing: 5px;
+
+  font-size: 25px;
+
+}
+
+.artist-box p {
+
+  position: relative;
+
+  color: var(--gray);
+
+  font-size: 13px;
+
+  line-height: 2.3;
+
+  margin-top: 20px;
+
+}
+
+.coming {
+
+  position: relative;
+
+  display: inline-block;
+
+  padding: 10px 25px;
+
+  border: 1px solid var(--light);
+
+  color: var(--light);
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 10px;
+
+  letter-spacing: 4px;
+
+  margin-top: 30px;
+
+}
+
+/* CONTACT */
+
+.contact-box {
+
+  background: var(--panel);
+
+  border: 1px solid var(--line);
+
+  text-align: center;
+
+  padding: 55px 20px;
+
+}
+
+.contact-box h3 {
+
+  font-family: Orbitron, sans-serif;
+
+  letter-spacing: 4px;
+
+  font-size: 22px;
+
+}
+
+.contact-box p {
+
+  color: var(--gray);
+
+  font-size: 12px;
+
+  margin: 20px 0 30px;
+
+}
+
+.mail {
+
+  color: var(--light);
+
+  font-size: clamp(15px,4vw,22px);
+
+  text-decoration: none;
+
+  border-bottom: 1px solid var(--purple);
+
+  padding-bottom: 7px;
+
+  overflow-wrap: anywhere;
+
+}
+
+/* FOOTER */
+
+footer {
+
+  padding: 45px 20px;
+
+  text-align: center;
+
+  border-top: 1px solid var(--line);
+
+  color: #746a7d;
+
+}
+
+.footer-logo {
+
+  font-family: Orbitron, sans-serif;
+
+  font-size: 18px;
+
+  letter-spacing: 5px;
+
+  color: var(--light);
+
+  margin-bottom: 15px;
+
+}
+
+footer small {
+
+  font-size: 9px;
+
+  letter-spacing: 2px;
+
+}
+
+/* SCROLL ANIMATION */
+
+.reveal {
+
+  opacity: 0;
+
+  transform: translateY(35px);
+
+  transition: opacity .8s, transform .8s;
+
+}
+
+.reveal.show {
+
+  opacity: 1;
+
+  transform: translateY(0);
+
+}
+
+/* MOBILE */
+
+@media(max-width:750px) {
+
+  header {
+
+    height: 70px;
+
+    padding: 0 5%;
+
+  }
+
+  nav { gap: 12px; }
+
+  nav a { font-size: 9px; }
+
+  .logo { font-size: 14px; }
+
+  .hero {
+
+    grid-template-columns: 1fr;
+
+    padding: 135px 7% 75px;
+
+    gap: 45px;
+
+  }
+
+  .hero h1 { font-size: 65px; }
+
+  .hero-visual {
+
+    width: 90%;
+
+    max-width: 380px;
+
+    margin: auto;
+
+  }
+
+  section { padding: 80px 7%; }
+
+  .section-title { font-size: 26px; }
+
+  .profile-layout {
+
+    grid-template-columns: 1fr;
+
+  }
+
+  .profile-photo {
+
+    max-width: 340px;
+
+    margin: auto;
+
+  }
+
+  .activity-grid {
+
+    grid-template-columns: 1fr;
+
+  }
+
+}
+
+@media(max-width:390px) {
+
+  nav { gap: 8px; }
+
+  nav a { font-size: 8px; }
+
+  .hero h1 { font-size: 53px; }
+
+  .hero-tag { font-size: 9px; }
+
+}
+
+@media(prefers-reduced-motion:reduce) {
+
+  *,*::before,*::after {
+
+    animation: none !important;
+
+    transition: none !important;
+
+    scroll-behavior: auto !important;
+
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- OPENING -->
+
+<div id="intro">
+
+  <canvas id="noiseCanvas"></canvas>
+
+  <div class="scanlines"></div>
+
+  <div class="color-shift"></div>
+
+  <div class="glitch-block"></div>
+
+  <div class="glitch-block"></div>
+
+  <div class="glitch-block"></div>
+
+  <div class="intro-content">
+
+    <div class="intro-title">YOROI</div>
+
+    <div class="intro-sub">WELCOME TO MY WORLD</div>
+
+    <div class="loading"></div>
+
+    <div class="intro-status">SYSTEM INITIALIZING...</div>
+
+  </div>
+
+</div>
+
+<!-- HEADER -->
+
+<header>
+
+  <div class="logo">YOROI<span>.</span></div>
+
+  <nav>
+
+    <a href="#profile">PROFILE</a>
+
+    <a href="#activity">ACTIVITY</a>
+
+    <a href="#artist">ARTIST</a>
+
+    <a href="#contact">CONTACT</a>
+
+  </nav>
+
+</header>
+
+<main>
+
+<!-- HERO -->
+
+<div class="hero">
+
+  <div class="hero-content">
+
+    <div class="hero-tag">VTUBER / CREATOR / ARTIST</div>
+
+    <h1>
+
+      伊武月<br>
+
+      <span>ヨロイ</span>
+
+    </h1>
+
+    <p class="hero-description">
+
+      バーチャルの世界から、あなたの日常へ。<br>
+
+      ゲーム・動画・配信を中心に活動中。<br>
+
+      まじで頑張ります。
+
+    </p>
+
+    <div class="hero-en">
+
+      WELCOME TO MY DIGITAL WORLD.
+
+    </div>
+
+    <div class="hero-buttons">
+
+      <a href="#activity" class="btn primary">ACTIVITIES ↗</a>
+
+      <a href="#profile" class="btn">PROFILE</a>
+
+    </div>
+
+  </div>
+
+  <div class="hero-visual">
+
+    <div class="hero-image-frame">
+
+      <img src="yoroi-point.jpg" alt="伊武月ヨロイ 指差しポーズ">
+
+    </div>
+
+    <div class="image-caption">01 / YOROI CHARACTER</div>
+
+  </div>
+
+</div>
+
+<!-- PROFILE -->
+
+<section id="profile">
+
+  <div class="reveal">
+
+    <div class="section-number">01 / PROFILE</div>
+
+    <h2 class="section-title">
+
+      プロフィール <span>ABOUT ME</span>
+
+    </h2>
+
+  </div>
+
+  <div class="profile-layout reveal">
+
+    <div class="profile-photo">
+
+      <img src="yoroi-3d.jpg" alt="伊武月ヨロイ 3Dモデル">
+
+    </div>
+
+    <div class="profile-info">
+
+      <h3>伊武月ヨロイ</h3>
+
+      <p>
+
+        VTuberとしてYouTubeを中心に活動中。<br>
+
+        ゲーム実況や配信、グループ実況や漫画噺など、さまざまなコンテンツを発信しています。<br>
+
+        これからも自分らしい表現を追求しながら、
+
+        新しい活動にも挑戦していきます！！是非！推しにしてください！
+
+      </p>
+
+      <div class="profile-face">
+
+        <img src="yoroi-smug.jpg" alt="伊武月ヨロイ ドヤ顔">
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ACTIVITIES -->
+
+<section id="activity">
+
+  <div class="reveal">
+
+    <div class="section-number">02 / ACTIVITIES</div>
+
+    <h2 class="section-title">
+
+      活動場所 <span>FOLLOW ME</span>
+
+    </h2>
+
+  </div>
+
+  <div class="activity-grid reveal">
+
+    <!-- MAIN CHANNEL -->
+
+    <a class="activity-card"
+
+       href="https://youtube.com/@yoroinodensetu-v9g"
+
+       target="_blank" rel="noopener">
+
+      <small>01 / MAIN CHANNEL</small>
+
+      <h3>伊武月ヨロイ</h3>
+
+      <p>ゲーム実況・ライブ配信など</p>
+
+      <span class="arrow">↗</span>
+
+    </a>
+
+    <!-- MANGA CHANNEL -->
+
+    <a class="activity-card"
+
+       href="https://youtube.com/@yoroinomangadensetu"
+
+       target="_blank" rel="noopener">
+
+      <small>02 / ANOTHER CHANNEL</small>
+
+      <h3>ヨロイの漫画噺</h3>
+
+      <p>大好きな漫画の魅力や作品について発信！</p>
+
+      <span class="arrow">↗</span>
+
+    </a>
+
+    <!-- GROUP CHANNEL -->
+
+    <a class="activity-card group"
+
+       href="https://youtube.com/@hazigaki0000"
+
+       target="_blank" rel="noopener">
+
+      <small>03 / GROUP CHANNEL</small>
+
+      <h3>ハジガキ！</h3>
+
+      <p>グループで活動するYouTubeチャンネル！</p>
+
+      <span class="arrow">↗</span>
+
+    </a>
+
+    <!-- X -->
+
+    <a class="activity-card"
+
+       href="https://x.com/4roinodensetu"
+
+       target="_blank" rel="noopener">
+
+      <small>04 / SOCIAL MEDIA</small>
+
+      <h3>X (Twitter)</h3>
+
+      <p>日常・最新情報・活動のお知らせ</p>
+
+      <span class="arrow">↗</span>
+
+    </a>
+
+  </div>
+
+</section>
+
+<!-- ARTIST -->
+
+<section id="artist">
+
+  <div class="reveal">
+
+    <div class="section-number">03 / ARTIST PROJECT</div>
+
+    <h2 class="section-title">
+
+      アーティスト活動 <span>NEW PROJECT</span>
+
+    </h2>
+
+  </div>
+
+  <div class="artist-box reveal">
+
+    <h3>ANOTHER SIDE</h3>
+
+    <p>
+
+      新たな名義でのアーティスト活動を準備中。<br>
+
+      まだ公開されていない、新しい表現のかたち。<br>
+
+      続報をお楽しみに。
+
+    </p>
+
+    <div class="coming">COMING SOON</div>
+
+  </div>
+
+</section>
+
+<!-- CONTACT -->
+
+<section id="contact">
+
+  <div class="reveal">
+
+    <div class="section-number">04 / CONTACT</div>
+
+    <h2 class="section-title">
+
+      お仕事のご依頼 <span>CONTACT</span>
+
+    </h2>
+
+  </div>
+
+  <div class="contact-box reveal">
+
+    <h3>LET'S WORK TOGETHER</h3>
+
+    <p>
+
+      お仕事・コラボレーションなどのご相談はこちらから。
+
+    </p>
+
+    <a class="mail" href="mailto:4roi@boxfi.uk">
+
+      4roi@boxfi.uk
+
+    </a>
+
+  </div>
+
+</section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer>
+
+  <div class="footer-logo">YOROI.</div>
+
+  <small>© YOROI OFFICIAL WEBSITE</small>
+
+</footer>
+
+<script>
+
+/* =========================
+
+   DIGITAL NOISE GENERATOR
+
+========================= */
+
+const canvas = document.getElementById('noiseCanvas');
+
+const ctx = canvas.getContext('2d');
+
+let noiseInterval;
+
+function resizeCanvas() {
+
+  canvas.width = window.innerWidth;
+
+  canvas.height = window.innerHeight;
+
+}
+
+function drawNoise() {
+
+  const width = canvas.width;
+
+  const height = canvas.height;
+
+  const imageData = ctx.createImageData(width, height);
+
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+
+    const value = Math.random() * 255;
+
+    data[i] = value;
+
+    data[i + 1] = value;
+
+    data[i + 2] = value;
+
+    data[i + 3] = Math.random() * 100;
+
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+
+  // 横方向のデジタルノイズ
+
+  if (Math.random() > 0.55) {
+
+    const y = Math.random() * height;
+
+    const h = Math.random() * 8 + 1;
+
+    ctx.fillStyle =
+
+      Math.random() > 0.5
+
+      ? 'rgba(185,120,255,.5)'
+
+      : 'rgba(80,210,255,.35)';
+
+    ctx.fillRect(
+
+      Math.random() * width * .4,
+
+      y,
+
+      Math.random() * width * .7,
+
+      h
+
+    );
+
+  }
+
+}
+
+resizeCanvas();
+
+window.addEventListener('resize', resizeCanvas);
+
+noiseInterval = setInterval(drawNoise, 90);
+
+// OPENING終了
+
+window.addEventListener('load', () => {
+
+  setTimeout(() => {
+
+    document.getElementById('intro').classList.add('hide');
+
+    clearInterval(noiseInterval);
+
+  }, 2600);
+
+});
+
+// SCROLL ANIMATION
+
+const observer = new IntersectionObserver((entries) => {
+
+  entries.forEach(entry => {
+
+    if (entry.isIntersecting) {
+
+      entry.target.classList.add('show');
+
+      observer.unobserve(entry.target);
+
+    }
+
+  });
+
+}, {
+
+  threshold: 0.12
+
+});
+
+document.querySelectorAll('.reveal').forEach(el => {
+
+  observer.observe(el);
+
+});
+
+</script>
+
+</body>
+
+</html>
