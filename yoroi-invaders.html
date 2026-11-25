@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="ja">
 <head>
@@ -6,66 +5,452 @@
 <meta name="theme-color" content="#090711"><title>YOROI INVADERS</title>
 <style>
 :root{color-scheme:dark;--bg:#090711;--panel:#19132b;--purple:#9b6cff;--cyan:#63f3e6}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0%,#281744,var(--bg) 60%);color:#f5f1ff;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
-main{width:min(100%,700px);margin:auto;padding:22px 14px 32px}header{text-align:center;margin:8px 0 16px}.kicker{font-size:11px;letter-spacing:.25em;color:var(--cyan);font-weight:800}h1{font-size:clamp(26px,7vw,40px);margin:7px 0}.sub{font-size:12px;color:#aaa2bd}
-.shell{padding:10px;border:1px solid #514071;border-radius:18px;background:linear-gradient(145deg,#1b1430,#0d0b18);box-shadow:0 16px 50px #0009}.hud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:3px 3px 10px;font-size:12px;font-weight:800}.hud span{color:var(--cyan)}
-.wrap{position:relative;overflow:hidden;border:1px solid #40345e;border-radius:12px;background:#070611;line-height:0}canvas{display:block;width:100%;height:auto;touch-action:none}
-.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#080612df;text-align:center;line-height:1.5}.overlay.hidden{display:none}.modal{width:min(100%,390px);padding:20px 16px;border:1px solid #7355a8;border-radius:16px;background:#171128}.modal h2{margin:4px 0 8px}.modal p{font-size:13px;color:#c9c1d8}
-button{font:inherit;color:#fff;border:1px solid #7655aa;background:linear-gradient(135deg,#6740a8,#34204f);border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}.primary{width:100%}.choices{display:grid;gap:9px}.upgrade{width:100%;text-align:left;background:#211936}.upgrade strong{display:block;color:var(--cyan)}.upgrade small{display:block;color:#c8bfd8;font-weight:500;margin-top:4px}
-.controls{display:flex;justify-content:space-between;gap:10px;margin-top:10px}.group{display:flex;gap:9px}.control{width:66px;height:54px;padding:0;font-size:20px;touch-action:none}.fire{width:105px;font-size:14px}.help{text-align:center;color:#aaa2bd;font-size:12px;line-height:1.7;padding:12px 4px 2px}.footer{text-align:center;color:#776e89;font-size:10px;margin-top:16px;letter-spacing:.12em}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0%,#281744,var(--bg) 60%);color:#f5f1ff;font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif;user-select:none;-webkit-user-select:none}
+main{width:min(100%,700px);margin:auto;padding:18px 14px 32px}
+header{text-align:center;margin:4px 0 14px}
+.kicker{font-size:11px;letter-spacing:.25em;color:var(--cyan);font-weight:800}
+h1{font-size:clamp(26px,7vw,40px);margin:6px 0}
+.sub{font-size:12px;color:#aaa2bd}
+.shell{padding:10px;border:1px solid #514071;border-radius:18px;background:linear-gradient(145deg,#1b1430,#0d0b18);box-shadow:0 16px 50px #0009}
+.hud{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:3px 3px 10px;font-size:12px;font-weight:800}
+.hud span{color:var(--cyan)}
+.wrap{position:relative;overflow:hidden;border:1px solid #40345e;border-radius:12px;background:#070611;line-height:0}
+canvas{display:block;width:100%;height:auto;touch-action:none;cursor:ew-resize}
+.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;background:#080612df;text-align:center;line-height:1.5}
+.overlay.hidden{display:none}
+.modal{width:min(100%,390px);padding:20px 16px;border:1px solid #7355a8;border-radius:16px;background:#171128}
+.modal h2{margin:4px 0 8px}
+.modal p{font-size:13px;color:#c9c1d8}
+button{font:inherit;color:#fff;border:1px solid #7655aa;background:linear-gradient(135deg,#6740a8,#34204f);border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;transition:transform .08s,filter .15s}
+button:active{transform:scale(.97)}
+.primary{width:100%}
+.choices{display:grid;gap:9px}
+.upgrade{width:100%;text-align:left;background:#211936}
+.upgrade strong{display:block;color:var(--cyan)}
+.upgrade small{display:block;color:#c8bfd8;font-weight:500;margin-top:4px}
+/* スマホ・PC共通で押しやすい下部操作エリア */
+.controls{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:12px}
+.control{height:58px;padding:0 12px;font-size:15px;touch-action:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.mode-btn{background:#211936;border-color:#5b4682;color:#c9c1d8}
+.mode-btn.auto-on{background:linear-gradient(135deg,#1d5e63,#163847);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 14px #63f3e633}
+.fire{font-size:17px;letter-spacing:.05em}
+.help{text-align:center;color:#aaa2bd;font-size:12px;line-height:1.75;padding:12px 4px 2px}
+.help strong{color:#e2dbff;font-weight:700}
+.footer{text-align:center;color:#776e89;font-size:10px;margin-top:14px;letter-spacing:.12em}
 </style></head>
 <body><main>
 <header><div class="kicker">ROGUELITE • SPACE SHOOTER</div><h1>YOROI INVADERS</h1><div class="sub">伊武月ヨロイと宇宙からの侵略者を撃退せよ。</div></header>
 <section class="shell">
 <div class="hud"><div>STAGE <span id="stage">1</span></div><div>SCORE <span id="score">0</span></div><div>HP <span id="hp">♥♥♥</span></div><div>POWER <span id="power">1</span></div></div>
 <div class="wrap"><canvas id="game" width="480" height="640"></canvas>
-<div class="overlay" id="start"><div class="modal"><div class="kicker">MISSION START</div><h2>侵略者を撃退せよ！</h2><p>敵を全滅させるとレベルアップ。ランダムに提示される強化を選び、能力を組み合わせて進もう。</p><button class="primary" id="startBtn">ゲームスタート</button></div></div>
+<div class="overlay" id="start"><div class="modal"><div class="kicker">MISSION START</div><h2>侵略者を撃退せよ！</h2><p>敵を全滅させるとレベルアップ。3ステージごとに巨大ボスが出現！能力を組み合わせて進もう。</p><button class="primary" id="startBtn">ゲームスタート</button></div></div>
 <div class="overlay hidden" id="upgrade"><div class="modal"><div class="kicker">LEVEL UP</div><h2>強化を選択！</h2><p>次のステージに備えて能力をひとつ選ぼう。</p><div class="choices" id="choices"></div></div></div>
 <div class="overlay hidden" id="over"><div class="modal"><div class="kicker">MISSION FAILED</div><h2>ゲームオーバー</h2><p id="result"></p><button class="primary" id="restart">もう一度挑戦</button></div></div>
 </div>
-<div class="controls"><div class="group"><button class="control" id="left">◀</button><button class="control" id="right">▶</button></div><button class="control fire" id="fire">FIRE ●</button></div>
-<div class="help">PC：← → / A D で移動、Spaceで発射<br>スマホ：左右ボタンで移動、FIREを押し続けて発射</div>
+<!-- 押しやすい下部操作パネル（左：オート切替 / 右：大型FIREボタン） -->
+<div class="controls">
+  <button class="control mode-btn" id="autoBtn">AUTO: OFF</button>
+  <button class="control fire" id="fire">FIRE ●</button>
+</div>
+<div class="help">
+  <strong>PC操作</strong>：移動 [ ← → ] または [ A / D ] ／ 発射 [ Space / Enter / T ]<br>
+  <strong>スマホ操作</strong>：画面を左右にスワイプで移動 ／ 下部ボタンで発射・オート切替
+</div>
 </section><div class="footer">IBUDUKI YOROI • MINI GAME</div></main>
 <script>
 (()=>{
 const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d'),W=480,H=640;
 const sprite=new Image();sprite.src='yoroi-player.png';let spriteOK=false;sprite.onload=()=>spriteOK=true;
-let state='title',score=0,stage=1,last=0,keys={},touch={left:false,right:false,fire:false};
-let player,enemies=[],shots=[],badShots=[],particles=[],dir=1,spawn=0;
+
+// --- Web Audio API サウンドエンジン ---
+const AudioCtx=window.AudioContext||window.webkitAudioContext;
+let actx=null;
+function initAudio(){if(!actx)actx=new AudioCtx();if(actx.state==='suspended')actx.resume()}
+function tone(freq,endFreq,dur,type='square',vol=0.08,delay=0){
+  if(!actx)return;
+  const t=actx.currentTime+delay;
+  const osc=actx.createOscillator(),g=actx.createGain();
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,t);
+  if(endFreq)osc.frequency.exponentialRampToValueAtTime(Math.max(20,endFreq),t+dur);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  osc.connect(g);g.connect(actx.destination);
+  osc.start(t);osc.stop(t+dur);
+}
+const sfx={
+  shoot:()=>tone(880,260,0.08,'square',0.045),
+  mobHit:()=>tone(240,110,0.07,'sawtooth',0.06),
+  bossHit:()=>tone(150,65,0.11,'triangle',0.11),
+  bossDie:()=>{
+    [0,0.09,0.18,0.28,0.4].forEach((d,i)=>tone(190-i*25,35,0.28,'sawtooth',0.12,d));
+  },
+  levelUp:()=>{
+    [523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,f*1.02,0.14,'triangle',0.09,i*0.075));
+  }
+};
+
+let state='title',score=0,stage=1,last=0,keys={},touch={fire:false},autoFire=false;
+let player,enemies=[],boss=null,shots=[],badShots=[],particles=[],dir=1,spawn=0,waveTime=0,patternType=0;
 let up={rate:1,double:0,power:1,speed:1,maxHp:3,shield:0};
+
 const upgrades=[
-{id:'rate',name:'連射速度アップ',desc:'ショットの間隔が短くなる。',apply:()=>up.rate=Math.min(4,up.rate+1)},
-{id:'double',name:'ダブルショット',desc:'弾を2〜3方向に同時発射。',apply:()=>up.double=Math.min(2,up.double+1)},
-{id:'power',name:'弾威力アップ',desc:'敵を倒すために必要な弾数が減る。',apply:()=>up.power=Math.min(4,up.power+1)},
-{id:'speed',name:'機動力アップ',desc:'ヨロイの移動速度が上がる。',apply:()=>up.speed=Math.min(3,up.speed+1)},
-{id:'maxHp',name:'最大HPアップ',desc:'最大HPが1増え、HPも回復する。',apply:()=>{up.maxHp=Math.min(6,up.maxHp+1);player.hp=Math.min(up.maxHp,player.hp+1)}},
-{id:'shield',name:'シールドチャージ',desc:'敵弾を1回防ぐシールドを獲得。',apply:()=>up.shield=Math.min(3,up.shield+1)}
+  {id:'rate',name:'連射速度アップ',desc:'ショットの間隔が短くなる。',apply:()=>up.rate=Math.min(4,up.rate+1)},
+  {id:'double',name:'ダブルショット',desc:'弾を2〜3方向に同時発射。',apply:()=>up.double=Math.min(2,up.double+1)},
+  {id:'power',name:'弾威力アップ',desc:'敵を倒すために必要な弾数が減る。',apply:()=>up.power=Math.min(4,up.power+1)},
+  {id:'speed',name:'機動力アップ',desc:'ヨロイの移動速度が上がる。',apply:()=>up.speed=Math.min(3,up.speed+1)},
+  {id:'maxHp',name:'最大HPアップ',desc:'最大HPが1増え、HPも回復する。',apply:()=>{up.maxHp=Math.min(6,up.maxHp+1);player.hp=Math.min(up.maxHp,player.hp+1)}},
+  {id:'shield',name:'シールドチャージ',desc:'敵弾を1回防ぐシールドを獲得。',apply:()=>up.shield=Math.min(3,up.shield+1)}
 ];
-function hud(){$('stage').textContent=stage;$('score').textContent=score;$('hp').textContent='♥'.repeat(player.hp)+'♡'.repeat(Math.max(0,up.maxHp-player.hp));$('power').textContent=up.power+(up.double?' +'+up.double+'D':'')}
+
+function hud(){
+  $('stage').textContent=stage+(stage%3===0?' (BOSS)':'');
+  $('score').textContent=score;
+  $('hp').textContent='♥'.repeat(player.hp)+'♡'.repeat(Math.max(0,up.maxHp-player.hp));
+  $('power').textContent=up.power+(up.double?' +'+up.double+'D':'');
+}
 function overlay(id){['start','upgrade','over'].forEach(x=>$(x).classList.toggle('hidden',x!==id))}
-function wave(){enemies=[];shots=[];badShots=[];dir=1;spawn=0;let rows=Math.min(2+Math.floor((stage-1)/2),5),cols=Math.min(5+Math.floor((stage-1)/3),8);for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){let fast=stage>=3&&Math.random()<.18;enemies.push({x:54+c*49,y:65+r*39,w:28,h:24,hp:fast?1:Math.max(1,Math.ceil(stage/4)),fast,phase:Math.random()*6})}}
-function reset(){score=0;stage=1;up={rate:1,double:0,power:1,speed:1,maxHp:3,shield:0};player={x:W/2,y:H-66,w:48,h:48,hp:3,cool:0,inv:0};particles=[];wave();hud()}
-function start(){reset();state='play';overlay('')}
+
+function toggleAuto(){
+  initAudio();
+  autoFire=!autoFire;
+  const btn=$('autoBtn');
+  btn.textContent=autoFire?'AUTO: ON':'AUTO: OFF';
+  btn.classList.toggle('auto-on',autoFire);
+}
+
+// 敵ウェーブ＆ボス生成（パターン変化）
+function wave(){
+  enemies=[];boss=null;shots=[];badShots=[];dir=1;spawn=0;waveTime=0;
+  // 3ステージごとにボス出現
+  if(stage%3===0){
+    const maxHp=28+stage*14;
+    boss={x:W/2,y:105,w:96,h:64,hp:maxHp,maxHp,dir:1,cool:45,flash:0};
+    return;
+  }
+  // 通常ステージの陣形・動きパターンを変化
+  patternType=(stage-1)%4; // 0:標準, 1:V字陣形, 2:波状(サイン波), 3:高速突撃混成
+  let rows=Math.min(2+Math.floor((stage-1)/2),5);
+  let cols=Math.min(5+Math.floor((stage-1)/3),8);
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      let offsetY=0;
+      if(patternType===1) offsetY=Math.abs(c-(cols-1)/2)*14; // V字配置
+      let isFast=(patternType===3)?(r===rows-1||Math.random()<.28):(stage>=2&&Math.random()<.18);
+      let baseY=62+r*38+offsetY;
+      enemies.push({
+        x:54+c*49, y:baseY, baseY,
+        w:28, h:24,
+        hp:isFast?1:Math.max(1,Math.ceil(stage/3)),
+        fast:isFast,
+        phase:c*0.6+r*0.4,
+        flash:0
+      });
+    }
+  }
+}
+
+function reset(){
+  score=0;stage=1;
+  up={rate:1,double:0,power:1,speed:1,maxHp:3,shield:0};
+  player={x:W/2,y:H-66,w:48,h:48,hp:3,cool:0,inv:0};
+  particles=[];wave();hud();
+}
+function start(){initAudio();reset();state='play';overlay('')}
 function end(){state='over';$('result').textContent=`SCORE ${score}　/　STAGE ${stage}`;overlay('over')}
-function choose(item){item.apply();stage++;player.hp=Math.min(up.maxHp,player.hp+1);wave();state='play';hud();overlay('')}
-function levelUp(){state='upgrade';$('choices').innerHTML='';[...upgrades].sort(()=>Math.random()-.5).slice(0,3).forEach(it=>{let b=document.createElement('button');b.className='upgrade';b.innerHTML=`<strong>${it.name}</strong><small>${it.desc}</small>`;b.onclick=()=>choose(it);$('choices').appendChild(b)});overlay('upgrade')}
-function shoot(){let xs=up.double===0?[0]:up.double===1?[-10,10]:[-16,0,16];xs.forEach(dx=>shots.push({x:player.x+dx,y:player.y-24,w:5,h:13,damage:up.power}))}
+function choose(item){initAudio();item.apply();stage++;player.hp=Math.min(up.maxHp,player.hp+1);wave();state='play';hud();overlay('')}
+
+function levelUp(){
+  sfx.levelUp();
+  state='upgrade';
+  $('choices').innerHTML='';
+  [...upgrades].sort(()=>Math.random()-.5).slice(0,3).forEach(it=>{
+    let b=document.createElement('button');
+    b.className='upgrade';
+    b.innerHTML=`<strong>${it.name}</strong><small>${it.desc}</small>`;
+    b.onclick=()=>choose(it);
+    $('choices').appendChild(b);
+  });
+  overlay('upgrade');
+}
+
+function shoot(){
+  let xs=up.double===0?[0]:up.double===1?[-10,10]:[-16,0,16];
+  xs.forEach(dx=>shots.push({x:player.x+dx,y:player.y-24,w:5,h:13,damage:up.power}));
+  sfx.shoot();
+}
+
 function hit(a,b){return Math.abs(a.x-b.x)<(a.w+b.w)/2&&Math.abs(a.y-b.y)<(a.h+b.h)/2}
-function burst(x,y,color){for(let i=0;i<8;i++)particles.push({x,y,vx:(Math.random()-.5)*3,vy:(Math.random()-.5)*3,life:22,color})}
-function hurt(){if(player.inv>0)return;if(up.shield){up.shield--;player.inv=55;burst(player.x,player.y,'#63f3e6');return}player.hp--;player.inv=85;burst(player.x,player.y,'#ff6bba');hud();if(player.hp<=0)end()}
-function update(dt){if(state!=='play')return;let s=Math.min(dt/16.67,2),left=keys.ArrowLeft||keys.a||touch.left,right=keys.ArrowRight||keys.d||touch.right;if(left)player.x-=4.2*up.speed*s;if(right)player.x+=4.2*up.speed*s;player.x=Math.max(27,Math.min(W-27,player.x));player.cool-=s;player.inv-=s;if((keys[' ']||touch.fire)&&player.cool<=0){shoot();player.cool=Math.max(7,19-(up.rate-1)*3)}
-let edge=false;enemies.forEach(e=>{e.x+=dir*(.65+stage*.09)*s*(e.fast?1.35:1);if(e.x>W-20||e.x<20)edge=true});if(edge){dir*=-1;enemies.forEach(e=>e.y+=13)}
-spawn+=s;if(spawn>Math.max(24,100-stage*3)&&enemies.length){spawn=0;let e=enemies[Math.floor(Math.random()*enemies.length)];badShots.push({x:e.x,y:e.y+12,w:5,h:12,vy:2.4+stage*.16})}
-shots.forEach(b=>b.y-=8.8*s);badShots.forEach(b=>b.y+=b.vy*s);shots=shots.filter(b=>b.y>-20);badShots=badShots.filter(b=>b.y<H+20);
-for(let i=enemies.length-1;i>=0;i--){let e=enemies[i];if(e.y>H-105){hurt();e.y=H-130}for(let j=shots.length-1;j>=0;j--)if(hit(e,shots[j])){e.hp-=shots[j].damage;shots.splice(j,1);if(e.hp<=0){score+=e.fast?20:10;burst(e.x,e.y,e.fast?'#63f3e6':'#a879ff');enemies.splice(i,1)}break}}
-for(let i=badShots.length-1;i>=0;i--)if(hit(player,badShots[i])){badShots.splice(i,1);hurt()}
-particles.forEach(p=>{p.x+=p.vx*s;p.y+=p.vy*s;p.life-=s});particles=particles.filter(p=>p.life>0);
-if(!enemies.length){score+=stage*25;hud();levelUp()}hud()}
-function background(){ctx.fillStyle='#070611';ctx.fillRect(0,0,W,H);for(let i=0;i<65;i++){let x=i*83%W,y=(i*137+performance.now()*.012)%H;ctx.fillStyle=i%5===0?'#7654a8':'#4c4661';ctx.fillRect(x,y,2,2)}ctx.strokeStyle='#241a39';for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}}
-function draw(){background();enemies.forEach(e=>{ctx.save();ctx.translate(e.x,e.y);ctx.fillStyle=e.fast?'#65e9df':'#a978ff';ctx.fillRect(-10,-8,20,14);ctx.fillRect(-14,-3,4,8);ctx.fillRect(10,-3,4,8);ctx.fillRect(-7,7,4,5);ctx.fillRect(4,7,4,5);ctx.fillStyle='#100b20';ctx.fillRect(-6,-3,4,4);ctx.fillRect(3,-3,4,4);ctx.restore()});ctx.fillStyle='#72f5e8';shots.forEach(b=>ctx.fillRect(b.x-2,b.y-6,5,13));ctx.fillStyle='#ff75bd';badShots.forEach(b=>ctx.fillRect(b.x-2,b.y-6,5,12));particles.forEach(p=>{ctx.globalAlpha=Math.max(0,p.life/22);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,3,3)});ctx.globalAlpha=1;if(player){if(!(player.inv>0&&Math.floor(player.inv/5)%2===0)){if(spriteOK){ctx.imageSmoothingEnabled=false;ctx.drawImage(sprite,player.x-24,player.y-24,48,48)}else{ctx.fillStyle='#b9a0ff';ctx.fillRect(player.x-15,player.y-12,30,25);ctx.fillStyle='#f4f0ff';ctx.fillRect(player.x-9,player.y-17,18,8);ctx.fillStyle='#777';ctx.fillRect(player.x-19,player.y-3,7,14);ctx.fillRect(player.x+12,player.y-3,7,14)}}if(up.shield){ctx.strokeStyle='#65f4e7';ctx.lineWidth=2;ctx.beginPath();ctx.arc(player.x,player.y,32,0,Math.PI*2);ctx.stroke()}}ctx.fillStyle='#9a8cad';ctx.font='10px system-ui';ctx.fillText('YOROI DEFENSE SYSTEM',12,H-12)}
-function loop(t){let dt=last?Math.min(t-last,40):16;last=t;update(dt);draw();requestAnimationFrame(loop)}
-document.addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys[e.key===' '?' ':e.key]=true});document.addEventListener('keyup',e=>keys[e.key===' '?' ':e.key]=false);
-function hold(id,k){let el=$(id);el.addEventListener('pointerdown',e=>{e.preventDefault();touch[k]=true});['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();touch[k]=false}))}
-hold('left','left');hold('right','right');hold('fire','fire');$('startBtn').onclick=start;$('restart').onclick=start;reset();overlay('start');requestAnimationFrame(loop);
+function burst(x,y,color,count=8){
+  for(let i=0;i<count;i++)particles.push({x,y,vx:(Math.random()-.5)*4.2,vy:(Math.random()-.5)*4.2,life:24,color});
+}
+function hurt(){
+  if(player.inv>0)return;
+  if(up.shield){up.shield--;player.inv=55;burst(player.x,player.y,'#63f3e6',12);return}
+  player.hp--;player.inv=85;burst(player.x,player.y,'#ff6bba',12);hud();
+  if(player.hp<=0)end();
+}
+
+function update(dt){
+  if(state!=='play')return;
+  let s=Math.min(dt/16.67,2);
+  waveTime+=0.05*s;
+
+  // PC移動 (矢印キー or WASD)
+  let left=keys.ArrowLeft||keys.a||keys.A;
+  let right=keys.ArrowRight||keys.d||keys.D;
+  if(left)player.x-=4.4*up.speed*s;
+  if(right)player.x+=4.4*up.speed*s;
+  player.x=Math.max(27,Math.min(W-27,player.x));
+
+  player.cool-=s;
+  player.inv-=s;
+
+  // 発射判定 (Space / Enter / T / FIREボタン / オート発射)
+  let wantFire=autoFire||keys[' ']||keys.Enter||keys.t||keys.T||touch.fire;
+  if(wantFire&&player.cool<=0){
+    shoot();
+    player.cool=Math.max(7,19-(up.rate-1)*3);
+  }
+
+  // ボス挙動
+  if(boss){
+    if(boss.flash>0)boss.flash-=s;
+    boss.x+=boss.dir*(1.4+stage*0.12)*s;
+    if(boss.x>W-62||boss.x<62)boss.dir*=-1;
+    boss.y=105+Math.sin(waveTime*1.3)*14;
+    boss.cool-=s;
+    if(boss.cool<=0){
+      boss.cool=Math.max(32,72-stage*2);
+      // 3WAY弾発射
+      [-1.1,0,1.1].forEach(vx=>{
+        badShots.push({x:boss.x,y:boss.y+30,w:7,h:14,vx,vy:3.1+stage*0.12});
+      });
+    }
+  }
+
+  // 通常敵挙動
+  let edge=false;
+  enemies.forEach(e=>{
+    if(e.flash>0)e.flash-=s;
+    let spd=(.68+stage*.09)*s*(e.fast?1.45:1);
+    e.x+=dir*spd;
+    if(patternType===2){
+      // 波状移動パターン
+      e.y=e.baseY+Math.sin(waveTime*1.8+e.phase)*12;
+    }
+    if(e.x>W-22||e.x<22)edge=true;
+  });
+  if(edge){
+    dir*=-1;
+    enemies.forEach(e=>{e.baseY+=13;e.y+=13});
+  }
+
+  spawn+=s;
+  if(spawn>Math.max(24,96-stage*3)&&enemies.length){
+    spawn=0;
+    let e=enemies[Math.floor(Math.random()*enemies.length)];
+    badShots.push({x:e.x,y:e.y+12,w:5,h:12,vx:0,vy:2.5+stage*.16});
+  }
+
+  // 弾移動
+  shots.forEach(b=>b.y-=9.0*s);
+  badShots.forEach(b=>{b.x+=(b.vx||0)*s;b.y+=b.vy*s});
+  shots=shots.filter(b=>b.y>-20);
+  badShots=badShots.filter(b=>b.y<H+20&&b.x>-20&&b.x<W+20);
+
+  // 自機弾とボスの当たり判定
+  if(boss){
+    for(let j=shots.length-1;j>=0;j--){
+      if(hit(boss,shots[j])){
+        boss.hp-=shots[j].damage;
+        boss.flash=5;
+        shots.splice(j,1);
+        if(boss.hp<=0){
+          sfx.bossDie();
+          burst(boss.x,boss.y,'#ff6bba',28);
+          burst(boss.x,boss.y,'#63f3e6',22);
+          score+=stage*150;
+          boss=null;
+          hud();
+          levelUp(); // ボス撃破で強制レベルアップ
+          return;
+        }else{
+          sfx.bossHit();
+          burst(shots[j]?.x||boss.x,boss.y+20,'#ffd166',4);
+        }
+        break;
+      }
+    }
+  }
+
+  // 自機弾と通常敵の当たり判定
+  for(let i=enemies.length-1;i>=0;i--){
+    let e=enemies[i];
+    if(e.y>H-105){hurt();e.y-=35;e.baseY-=35}
+    for(let j=shots.length-1;j>=0;j--){
+      if(hit(e,shots[j])){
+        e.hp-=shots[j].damage;
+        e.flash=5;
+        shots.splice(j,1);
+        sfx.mobHit();
+        if(e.hp<=0){
+          score+=e.fast?20:10;
+          burst(e.x,e.y,e.fast?'#63f3e6':'#a879ff',9);
+          enemies.splice(i,1);
+        }
+        break;
+      }
+    }
+  }
+
+  // 敵弾と自機の当たり判定
+  for(let i=badShots.length-1;i>=0;i--){
+    if(hit(player,badShots[i])){badShots.splice(i,1);hurt()}
+  }
+
+  particles.forEach(p=>{p.x+=p.vx*s;p.y+=p.vy*s;p.life-=s});
+  particles=particles.filter(p=>p.life>0);
+
+  if(!boss&&!enemies.length){
+    score+=stage*25;
+    hud();
+    levelUp();
+  }
+  hud();
+}
+
+function background(){
+  ctx.fillStyle='#070611';ctx.fillRect(0,0,W,H);
+  for(let i=0;i<65;i++){
+    let x=i*83%W,y=(i*137+performance.now()*.012)%H;
+    ctx.fillStyle=i%5===0?'#7654a8':'#4c4661';
+    ctx.fillRect(x,y,2,2);
+  }
+  ctx.strokeStyle='#241a39';
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+}
+
+function draw(){
+  background();
+
+  // ボス描画
+  if(boss){
+    ctx.save();
+    ctx.translate(boss.x,boss.y);
+    ctx.fillStyle=boss.flash>0?'#ffffff':'#ff4d94';
+    ctx.fillRect(-42,-22,84,42);
+    ctx.fillRect(-52,-8,14,26);
+    ctx.fillRect(38,-8,14,26);
+    ctx.fillRect(-28,20,14,12);
+    ctx.fillRect(14,20,14,12);
+    ctx.fillStyle='#140a24';
+    ctx.fillRect(-24,-8,14,10);
+    ctx.fillRect(10,-8,14,10);
+    ctx.fillStyle='#63f3e6';
+    ctx.fillRect(-20,-5,6,5);
+    ctx.fillRect(14,-5,6,5);
+    ctx.restore();
+    // ボスHPバー
+    const bw=260,bx=(W-bw)/2,by=18;
+    ctx.fillStyle='#24193d';ctx.fillRect(bx,by,bw,10);
+    ctx.fillStyle='#ff4d94';ctx.fillRect(bx,by,bw*Math.max(0,boss.hp/boss.maxHp),10);
+    ctx.strokeStyle='#9b6cff';ctx.strokeRect(bx,by,bw,10);
+  }
+
+  // 通常敵描画
+  enemies.forEach(e=>{
+    ctx.save();ctx.translate(e.x,e.y);
+    ctx.fillStyle=e.flash>0?'#ffffff':(e.fast?'#65e9df':'#a978ff');
+    ctx.fillRect(-10,-8,20,14);ctx.fillRect(-14,-3,4,8);ctx.fillRect(10,-3,4,8);
+    ctx.fillRect(-7,7,4,5);ctx.fillRect(4,7,4,5);
+    ctx.fillStyle='#100b20';ctx.fillRect(-6,-3,4,4);ctx.fillRect(3,-3,4,4);
+    ctx.restore();
+  });
+
+  // 弾・エフェクト描画
+  ctx.fillStyle='#72f5e8';
+  shots.forEach(b=>ctx.fillRect(b.x-2,b.y-6,5,13));
+  ctx.fillStyle='#ff75bd';
+  badShots.forEach(b=>ctx.fillRect(b.x-3,b.y-6,6,12));
+
+  particles.forEach(p=>{
+    ctx.globalAlpha=Math.max(0,p.life/24);
+    ctx.fillStyle=p.color;
+    ctx.fillRect(p.x,p.y,3,3);
+  });
+  ctx.globalAlpha=1;
+
+  // 自機描画
+  if(player){
+    if(!(player.inv>0&&Math.floor(player.inv/5)%2===0)){
+      if(spriteOK){
+        ctx.imageSmoothingEnabled=false;
+        ctx.drawImage(sprite,player.x-24,player.y-24,48,48);
+      }else{
+        ctx.fillStyle='#b9a0ff';ctx.fillRect(player.x-15,player.y-12,30,25);
+        ctx.fillStyle='#f4f0ff';ctx.fillRect(player.x-9,player.y-17,18,8);
+        ctx.fillStyle='#777';ctx.fillRect(player.x-19,player.y-3,7,14);ctx.fillRect(player.x+12,player.y-3,7,14);
+      }
+    }
+    if(up.shield){
+      ctx.strokeStyle='#65f4e7';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(player.x,player.y,32,0,Math.PI*2);ctx.stroke();
+    }
+  }
+  ctx.fillStyle='#9a8cad';ctx.font='10px system-ui';
+  ctx.fillText('YOROI DEFENSE SYSTEM',12,H-12);
+}
+
+function loop(t){
+  let dt=last?Math.min(t-last,40):16;
+  last=t;update(dt);draw();
+  requestAnimationFrame(loop);
+}
+
+// --- キーボード入力 ---
+document.addEventListener('keydown',e=>{
+  if(['ArrowLeft','ArrowRight',' ','Enter'].includes(e.key))e.preventDefault();
+  initAudio();
+  keys[e.key]=true;
+});
+document.addEventListener('keyup',e=>{keys[e.key]=false});
+
+// --- スマホ＆マウス スワイプ移動（キャンバス上） ---
+let dragging=false,dragLastX=0;
+function getCanvasX(clientX){
+  const rect=canvas.getBoundingClientRect();
+  return (clientX-rect.left)*(W/rect.width);
+}
+canvas.addEventListener('pointerdown',e=>{
+  if(state!=='play')return;
+  initAudio();
+  dragging=true;
+  dragLastX=getCanvasX(e.clientX);
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!dragging||state!=='play')return;
+  const curX=getCanvasX(e.clientX);
+  const dx=curX-dragLastX;
+  dragLastX=curX;
+  player.x=Math.max(27,Math.min(W-27,player.x+dx*1.15));
+});
+['pointerup','pointercancel'].forEach(ev=>{
+  canvas.addEventListener(ev,()=>{dragging=false});
+});
+
+// --- 下部ボタン操作 ---
+const fireEl=$('fire');
+fireEl.addEventListener('pointerdown',e=>{e.preventDefault();initAudio();touch.fire=true});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>{
+  fireEl.addEventListener(ev,e=>{e.preventDefault();touch.fire=false});
+});
+$('autoBtn').onclick=toggleAuto;
+$('startBtn').onclick=start;
+$('restart').onclick=start;
+
+reset();overlay('start');requestAnimationFrame(loop);
 })();
 </script></body></html>
