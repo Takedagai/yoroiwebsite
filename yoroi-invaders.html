@@ -1,4 +1,4 @@
-<!doctype html>
+ <!doctype html>
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -19,6 +19,8 @@ h1{font-size:clamp(26px,7vw,40px);margin:5px 0}
 .relic-badges{display:flex;gap:5px;flex-wrap:wrap}
 .relic-tag{padding:2px 7px;border-radius:999px;background:#261b40;border:1px solid #8a63d2;color:var(--gold);font-weight:700;font-size:10px}
 .mod-tag{padding:2px 7px;border-radius:999px;background:#152c36;border:1px solid #3ca6b0;color:var(--cyan);font-weight:700;font-size:10px}
+.bgm-status{padding:2px 7px;border-radius:999px;background:#2a1936;border:1px solid #ff5ca8;color:#ff9ac9;font-weight:700;font-size:10px}
+.bgm-status.ok{background:#12332a;border-color:#5ef2a8;color:#5ef2a8}
 .wrap{position:relative;overflow:hidden;border:1px solid #40345e;border-radius:12px;background:#070611;line-height:0}
 canvas{display:block;width:100%;height:auto;touch-action:none;cursor:ew-resize}
 .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:14px;background:#080612e6;text-align:center;line-height:1.45;overflow-y:auto}
@@ -64,7 +66,10 @@ button:disabled{opacity:.42;cursor:not-allowed}
   <div>SOUL <span id="soul">0</span></div>
 </div>
 <div class="sub-hud">
-  <div id="modBox"><span class="mod-tag" id="modTag">MOD: 通常作戦</span></div>
+  <div id="modBox">
+    <span class="mod-tag" id="modTag">MOD: 通常作戦</span>
+    <span class="bgm-status" id="bgmStatus">MP3: 待機中</span>
+  </div>
   <div class="relic-badges" id="relicBox"></div>
 </div>
 <div class="wrap"><canvas id="game" width="480" height="640"></canvas>
@@ -126,20 +131,36 @@ const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('
 const sprite=new Image();sprite.src='yoroi-player.png';let spriteOK=false;sprite.onload=()=>spriteOK=true;
 
 const BGM_SRC='bgm.mp3';
-let customAudio=null;
-if(BGM_SRC){
-  customAudio=new Audio(BGM_SRC);
-  customAudio.loop=true;
-  customAudio.volume=0.35;
+let bgmStatusText='MP3: 未確認';
+let bgmStatusOk=false;
+
+function setBgmDebug(text,ok=false){
+  bgmStatusText=text;
+  bgmStatusOk=ok;
+  const el=$('bgmStatus');
+  if(el){
+    el.textContent=text;
+    el.classList.toggle('ok',ok);
+  }
 }
 
+const customAudio=new Audio(BGM_SRC);
+customAudio.loop=true;
+customAudio.volume=0.35;
+customAudio.addEventListener('canplay',()=>setBgmDebug('MP3: 読込OK',true));
+customAudio.addEventListener('playing',()=>setBgmDebug('MP3: 再生中',true));
+customAudio.addEventListener('error',()=>{
+  const code=customAudio.error?customAudio.error.code:'不明';
+  setBgmDebug(`MP3: 読込失敗 (code:${code})`,false);
+});
+
 const AudioCtx=window.AudioContext||window.webkitAudioContext;
-let actx=null,bgmEnabled=true,bgmTimer=null,bgmStep=0;
+let actx=null,bgmEnabled=true;
 
 function initAudio(){
   if(!actx)actx=new AudioCtx();
   if(actx.state==='suspended')actx.resume();
-  startBgmLoop();
+  syncBgmAudio();
 }
 
 function tone(freq,endFreq,dur,type='square',vol=0.07,delay=0){
@@ -155,38 +176,17 @@ function tone(freq,endFreq,dur,type='square',vol=0.07,delay=0){
   osc.start(t);osc.stop(t+dur);
 }
 
-const arpNotes=[220,311.13,349.23,440,349.23,311.13,261.63,392.00];
-const bassNotes=[110,110,87.31,87.31,98.00,98.00,130.81,123.47];
-
-function tickBgm(){
-  if(customAudio)return;
-  if(!bgmEnabled||!actx||(state!=='play'&&state!=='dying'&&state!=='upgrade'))return;
-  const isBoss=!!boss;
-  const transpose=isBoss?1.12246:1;
-  const idx=bgmStep%arpNotes.length;
-  const leadFreq=arpNotes[idx]*transpose*(bgmStep%16>=8?1.1892:1);
-  tone(leadFreq,leadFreq*1.01,0.095,'sawtooth',isBoss?0.026:0.02);
-  if(bgmStep%2===0){
-    const bFreq=bassNotes[(bgmStep>>1)%bassNotes.length]*transpose;
-    tone(bFreq,bFreq*0.95,0.16,'triangle',isBoss?0.048:0.038);
-  }
-  if(bgmStep%4===2){
-    tone(1400,450,0.045,'square',0.012);
-  }
-  bgmStep++;
-}
-
-function startBgmLoop(){
-  if(customAudio){
-    if(bgmEnabled&&(state==='play'||state==='upgrade'||state==='dying')){
-      customAudio.play().catch(()=>{});
-    }else{
-      customAudio.pause();
-    }
-    return;
-  }
-  if(!bgmTimer){
-    bgmTimer=setInterval(tickBgm,135);
+function syncBgmAudio(){
+  const shouldPlay=bgmEnabled&&(state==='play'||state==='upgrade'||state==='dying');
+  if(shouldPlay){
+    customAudio.play().then(()=>{
+      setBgmDebug('MP3: 再生中',true);
+    }).catch(err=>{
+      setBgmDebug(`MP3: 再生不可 (${err.name||'Error'})`,false);
+    });
+  }else{
+    customAudio.pause();
+    if(bgmStatusOk)setBgmDebug('MP3: 一時停止',true);
   }
 }
 
@@ -197,13 +197,7 @@ function syncBgmButtons(){
     el.textContent=bgmEnabled?'BGM: ON':'BGM: OFF';
     if(el.classList.contains('mode-btn'))el.classList.toggle('active-on',bgmEnabled);
   });
-  if(customAudio){
-    if(bgmEnabled&&(state==='play'||state==='upgrade'||state==='dying')){
-      customAudio.play().catch(()=>{});
-    }else{
-      customAudio.pause();
-    }
-  }
+  syncBgmAudio();
 }
 
 function toggleBgm(){
@@ -311,6 +305,7 @@ function hud(){
   $('power').textContent=up.power+(up.double?' +'+up.double+'D':'')+(up.pierce?' 貫':'')+(up.homing?' 誘':'');
   $('soul').textContent=meta.soul;
   $('modTag').textContent=`MOD: ${curMod.label} (SCORE x${curMod.scoreMul.toFixed(1)})`;
+  setBgmDebug(bgmStatusText,bgmStatusOk);
   const rBox=$('relicBox');rBox.innerHTML='';
   relics.forEach(r=>{
     const span=document.createElement('span');
